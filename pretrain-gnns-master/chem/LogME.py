@@ -3,10 +3,10 @@
 import warnings
 
 import numpy as np
-from numba import njit
+# from numba import njit
 
 
-@njit
+# @njit
 def each_evidence(y_, f, fh, v, s, vh, N, D):
     """
     compute the maximum evidence for each class
@@ -46,7 +46,7 @@ f_tmp = np.random.randn(20, 50).astype(np.float64)
 each_evidence(np.random.randint(0, 2, 50).astype(np.float64), f_tmp, f_tmp.transpose(), np.eye(20, dtype=np.float64), np.ones(20, dtype=np.float64), np.eye(20, dtype=np.float64), 50, 20)
 
 
-@njit
+# @njit
 def truncated_svd(x):
     u, s, vh = np.linalg.svd(x.transpose() @ x)
     s = np.sqrt(s)
