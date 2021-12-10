@@ -106,8 +106,8 @@ def eval(args, model, device, loader):
 
         return sum(roc_list)/len(roc_list) #y_true.shape[1]
     elif args.evaluation == 'f1':
-        y_true.append(batch.y)##
-        y_scores.append(pred)
+        # y_true.append(batch.y)##
+        # y_scores.append(pred)
 
         # y_true = torch.cat(y_true, dim = 0).cpu().numpy()
         # y_scores = torch.cat(y_scores, dim = 0).cpu().numpy()

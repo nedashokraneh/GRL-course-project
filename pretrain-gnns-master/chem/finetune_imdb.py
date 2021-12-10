@@ -12,7 +12,7 @@ from tqdm import tqdm
 import numpy as np
 
 from model import GNN, GNN_graphpred
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, f1_score
 
 from splitters import scaffold_split, random_split
 import pandas as pd
@@ -23,9 +23,9 @@ import shutil
 
 from tensorboardX import SummaryWriter
 
-criterion = nn.BCEWithLogitsLoss(reduction = "none")
 
-def train(args, model, device, loader, optimizer):
+
+def train(args, model, device, loader, optimizer, criterion):
     model.train()
 
     for step, batch in enumerate(tqdm(loader, desc="Iteration")):
@@ -38,7 +38,10 @@ def train(args, model, device, loader, optimizer):
         edge_attr = torch.zeros(size=[num_edges, 2], dtype=torch.long).to(device)
 
         pred = model(x, batch.edge_index, edge_attr, batch.batch)
-        y = batch.y.view(pred.shape).to(torch.float64)
+        if args.evaluation == 'auc':
+            y = batch.y.view(pred.shape).to(torch.float64)
+        elif args.evaluation == 'f1':
+            y = batch.y.to(torch.float64)
 
         # print(" ================= ")
         # print("TEST batch: \n{}\n".format(batch))
@@ -50,14 +53,19 @@ def train(args, model, device, loader, optimizer):
         # print("TEST y: \n{}\n".format(y))
 
         #Whether y is non-null or not.
-        is_valid = y**2 > 0
+        is_valid = y**2 >= 0 # y is [0, 1] for IMDB data 
+        # print("TEST is_valid: {}".format(is_valid))
         #Loss matrix
-        loss_mat = criterion(pred.double(), (y+1)/2)
+        if args.evaluation == 'auc':
+            loss_mat = criterion(pred.double(), y)
+        elif args.evaluation == 'f1':
+            loss_mat = criterion(pred.double(), y.long())
         #loss matrix after removing null target
         loss_mat = torch.where(is_valid, loss_mat, torch.zeros(loss_mat.shape).to(loss_mat.device).to(loss_mat.dtype))
             
         optimizer.zero_grad()
         loss = torch.sum(loss_mat)/torch.sum(is_valid)
+        # print("TEST loss: {}".format(loss))
         loss.backward()
 
         optimizer.step()
@@ -79,28 +87,48 @@ def eval(args, model, device, loader):
 
         with torch.no_grad():
             pred = model(x, batch.edge_index, edge_attr, batch.batch)
+            # print("TEST pred: {}".format(pred))
 
-        y_true.append(batch.y.view(pred.shape))
+        if args.evaluation == 'auc':
+            y_true.append(batch.y.view(pred.shape))
+        elif args.evaluation == 'f1':
+            y_true.append(batch.y)
+
         y_scores.append(pred)
+    
+    if args.evaluation == 'auc':
+        y_true = torch.cat(y_true, dim = 0).cpu().numpy()
+        y_scores = torch.cat(y_scores, dim = 0).cpu().numpy()
 
-    y_true = torch.cat(y_true, dim = 0).cpu().numpy()
-    y_scores = torch.cat(y_scores, dim = 0).cpu().numpy()
+        roc_list = []
+        for i in range(y_true.shape[1]):
+            # print("TEST y_true[:,i]: {}".format(y_true[:, i]))
+            #AUC is only defined when there is at least one positive data.
+            if np.sum(y_true[:,i] == 1) > 0 and np.sum(y_true[:,i] == 0) > 0: # change '-1' to '0' because labels in IMDB-B are 0,1 instead of -1,1
+                is_valid = y_true[:,i]**2 >= 0
+                # print("TEST is_valid: {}".format(is_valid))
+                # print("TEST y_scores[is_valid,i]: {}".format(y_scores[is_valid,i]))
+                roc_list.append(roc_auc_score(y_true[is_valid,i], y_scores[is_valid,i]))
 
-    roc_list = []
-    for i in range(y_true.shape[1]):
-        # print("TEST y_true[:,i]: {}".format(y_true[:, i]))
-        #AUC is only defined when there is at least one positive data.
-        if np.sum(y_true[:,i] == 1) > 0 and np.sum(y_true[:,i] == 0) > 0: # change '-1' to '0' because labels in IMDB-B are 0,1 instead of -1,1
-            is_valid = y_true[:,i]**2 >= 0
-            # print("TEST is_valid: {}".format(is_valid))
-            # print("TEST y_scores[is_valid,i]: {}".format(y_scores[is_valid,i]))
-            roc_list.append(roc_auc_score(y_true[is_valid,i], y_scores[is_valid,i]))
+        if len(roc_list) < y_true.shape[1]:
+            print("Some target is missing!")
+            print("Missing ratio: %f" %(1 - float(len(roc_list))/y_true.shape[1]))
 
-    if len(roc_list) < y_true.shape[1]:
-        print("Some target is missing!")
-        print("Missing ratio: %f" %(1 - float(len(roc_list))/y_true.shape[1]))
+        return sum(roc_list)/len(roc_list) #y_true.shape[1]
+    elif args.evaluation == 'f1':
 
-    return sum(roc_list)/len(roc_list) #y_true.shape[1]
+        y_true = torch.cat(y_true, dim=0)
+        y_scores = torch.cat(y_scores, dim=0)
+        preds = y_scores.argmax(dim=1)
+        f1 = f1_score(y_true.cpu().numpy(), preds.cpu().numpy(), average='micro')
+        # print("TEST preds: {}".format(preds))
+        # print("TEST y_true: {}".format(y_true))
+        # print("TEST len(y_true): {}".format(len(y_true.cpu().numpy())))
+        # print("TEST len(preds): {}".format(len(preds.cpu().numpy())))
+        
+        return f1
+    else:
+        raise ValueError("Evaluation metric not defined.")
 
 
 
@@ -138,6 +166,7 @@ def main():
     parser.add_argument('--split', type = str, default="scaffold", help = "random or scaffold or random_scaffold")
     parser.add_argument('--eval_train', type=int, default = 0, help='evaluating training or not')
     parser.add_argument('--num_workers', type=int, default = 4, help='number of workers for dataset loading')
+    parser.add_argument('--evaluation', type=str, default='auc', help='evaluation metric used. auc, f1.')    
     args = parser.parse_args()
 
 
@@ -147,9 +176,17 @@ def main():
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(args.runseed)
 
+    if args.evaluation == 'auc':
+        criterion = nn.BCEWithLogitsLoss(reduction = "none")
+    elif args.evaluation == 'f1':
+        criterion = nn.CrossEntropyLoss()
+
     #Bunch of classification tasks
     if args.dataset == "imdb-b":
-        num_tasks = 1
+        if args.evaluation == 'auc':
+            num_tasks = 1
+        elif args.evaluation == 'f1':
+            num_tasks = 2
         dataset = TUDataset(root='data/imdb/binary', name='IMDB-BINARY')
     elif args.dataset == "imdb-m":
         num_tasks = 3 # 3 classes (??)
@@ -203,7 +240,7 @@ def main():
     for epoch in range(1, args.epochs+1):
         print("====epoch " + str(epoch))
         
-        train(args, model, device, train_loader, optimizer)
+        train(args, model, device, train_loader, optimizer, criterion)
 
         print("====Evaluation")
         if args.eval_train:

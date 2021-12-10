@@ -21,6 +21,8 @@ from sklearn.metrics import roc_auc_score, f1_score
 from splitters import scaffold_split, random_split, random_scaffold_split
 import pandas as pd
 
+from TUDataset import TUDataset
+
 from tensorboardX import SummaryWriter
 
 # criterion = nn.BCEWithLogitsLoss(reduction = "none")
@@ -30,28 +32,47 @@ def train(args, model, device, loader, optimizer, criterion):
 
     for step, batch in enumerate(tqdm(loader, desc="Iteration")):
         batch = batch.to(device)
-        pred = model(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
+        
+        if args.dataset in ['imdb-b', 'imdb-m']:
+            ## manually add create node feature and edge attribute ([0, 0]) to IMDB data ## 
+            num_nodes = batch.batch.shape[0]
+            num_edges = batch.edge_index.shape[1]
+            x = torch.zeros(size=[num_nodes, 2], dtype=torch.long).to(device)
+            edge_attr = torch.zeros(size=[num_edges, 2], dtype=torch.long).to(device)
+
+            pred = model(x, batch.edge_index, edge_attr, batch.batch)
+        else:
+            pred = model(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
         if args.evaluation == 'auc':
             y = batch.y.view(pred.shape).to(torch.float64)
         elif args.evaluation == 'f1':
             y = batch.y.to(torch.float64)
 
         #Whether y is non-null or not.
-        is_valid = y**2 > 0
+        if args.dataset in ['bbbp', 'bace']:
+            is_valid = y**2 > 0
+        else:
+            is_valid = y**2 >= 0
         #Loss matrix
         if args.evaluation == 'auc':
             loss_mat = criterion(pred.double(), (y+1)/2)
+            #loss matrix after removing null target
+            loss_mat = torch.where(is_valid, loss_mat, torch.zeros(loss_mat.shape).to(loss_mat.device).to(loss_mat.dtype))
+                
+            optimizer.zero_grad()
+            loss = torch.sum(loss_mat)/torch.sum(is_valid)
+            loss.backward()
+
+            optimizer.step()
+
         elif args.evaluation == 'f1':
-            loss_mat = criterion(pred.double(), ((y+1)/2).long())
-        #loss matrix after removing null target
-        loss_mat = torch.where(is_valid, loss_mat, torch.zeros(loss_mat.shape).to(loss_mat.device).to(loss_mat.dtype))
-            
-        optimizer.zero_grad()
-        loss = torch.sum(loss_mat)/torch.sum(is_valid)
-        loss.backward()
-
-        optimizer.step()
-
+            if args.dataset in ['bbbp', 'bace']:
+                loss = criterion(pred.double(), ((y+1)/2).long())
+            elif args.dataset in ['imdb-b', 'imdb-m']:
+                loss = criterion(pred.double(), y.long())
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
 def eval(args, model, device, loader, normalized_weight=None):
     model.eval()
@@ -62,7 +83,16 @@ def eval(args, model, device, loader, normalized_weight=None):
         batch = batch.to(device)
 
         with torch.no_grad():
-            pred = model(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
+            if args.dataset in ['imdb-b', 'imdb-m']:
+                ## manually add create node feature and edge attribute ([0, 0]) to IMDB data ## 
+                num_nodes = batch.batch.shape[0]
+                num_edges = batch.edge_index.shape[1]
+                x = torch.zeros(size=[num_nodes, 2], dtype=torch.long).to(device)
+                edge_attr = torch.zeros(size=[num_edges, 2], dtype=torch.long).to(device)
+
+                pred = model(x, batch.edge_index, edge_attr, batch.batch)
+            else:
+                pred = model(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
 
         if args.evaluation == 'auc':
             y_true.append(batch.y.view(pred.shape).cpu())
@@ -70,8 +100,6 @@ def eval(args, model, device, loader, normalized_weight=None):
         else:
             y_true.append(batch.y)
             y_scores.append(pred)
-
-        
 
     if args.evaluation == 'auc':
         y_true = torch.cat(y_true, dim = 0).numpy()
@@ -81,10 +109,16 @@ def eval(args, model, device, loader, normalized_weight=None):
         weight = []
         for i in range(y_true.shape[1]):
             #AUC is only defined when there is at least one positive data.
-            if np.sum(y_true[:,i] == 1) > 0 and np.sum(y_true[:,i] == -1) > 0:
-                is_valid = y_true[:,i]**2 > 0
-                roc_list.append(roc_auc_score((y_true[is_valid,i] + 1)/2, y_scores[is_valid,i]))
-                # weight.append(normalized_weight[i])
+            if args.dataset in ['bbbp', 'bace']:
+                if np.sum(y_true[:,i] == 1) > 0 and np.sum(y_true[:,i] == -1) > 0:
+                    is_valid = y_true[:,i]**2 > 0
+                    roc_list.append(roc_auc_score((y_true[is_valid,i] + 1)/2, y_scores[is_valid,i]))
+                    # weight.append(normalized_weight[i])
+            else:
+                if np.sum(y_true[:,i] == 1) > 0 and np.sum(y_true[:,i] == 0) > 0:
+                    is_valid = y_true[:,i]**2 >= 0
+                    roc_list.append(roc_auc_score(y_true[is_valid,i], y_scores[is_valid,i]))
+                    # weight.append(normalized_weight[i])
 
         if len(roc_list) < y_true.shape[1]:
             print("Some target is missing!")
@@ -96,15 +130,17 @@ def eval(args, model, device, loader, normalized_weight=None):
         # return weight.dot(roc_list)
         return sum(roc_list)/len(roc_list) 
     elif args.evaluation == 'f1':
-        y_true.append(batch.y)
-        y_scores.append(pred)
 
         y_true = torch.cat(y_true, dim=0)
         y_scores = torch.cat(y_scores, dim=0)
         preds = y_scores.argmax(dim=1)
         # print("TEST y_true (-1, 1 ==> 0, 1): {}".format((y_true.cpu().numpy()+1)/2))
         # print("TEST preds: {}".format(preds))
-        f1 = f1_score((y_true.cpu().numpy()+1)/2, preds.cpu().numpy(), average='micro')
+        if args.dataset in ['bbbp', 'bace']:
+            f1 = f1_score((y_true.cpu().numpy()+1)/2, preds.cpu().numpy(), average='micro')
+        elif args.dataset in ['imdb-b', 'imdb-m']:
+            f1 = f1_score(y_true.cpu().numpy(), preds.cpu().numpy(), average='micro')
+
         return f1
     else:
         raise ValueError("Evaluation metric not defined.")
@@ -164,17 +200,34 @@ def main():
             num_tasks = 1
         elif args.evaluation == 'f1':
             num_tasks = 2
+    elif args.dataset == 'imdb-b':
+        if args.evaluation == 'auc':
+            num_tasks = 1
+        elif args.evaluation == 'f1':
+            num_tasks = 2
+    elif args.dataset == 'imdb-m':
+        num_tasks = 3
     else:
         raise ValueError("Invalid dataset name.")
 
     #set up dataset
-    dataset = MoleculeDataset("dataset/" + args.dataset, dataset=args.dataset)
+    if args.dataset in ['bbbp', 'bace']:
 
-    # loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers = args.num_workers)
-    smiles_list = pd.read_csv('dataset/' + args.dataset + '/processed/smiles.csv', header=None)[0].tolist()
-    train_dataset, valid_dataset, test_dataset = scaffold_split(dataset, smiles_list, null_value=0, frac_train=0.8,frac_valid=0.1, frac_test=0.1)
-    print("scaffold")
-    
+        dataset = MoleculeDataset("dataset/" + args.dataset, dataset=args.dataset)
+
+        # loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers = args.num_workers)
+        smiles_list = pd.read_csv('dataset/' + args.dataset + '/processed/smiles.csv', header=None)[0].tolist()
+        train_dataset, valid_dataset, test_dataset = scaffold_split(dataset, smiles_list, null_value=0, frac_train=0.8,frac_valid=0.1, frac_test=0.1)
+        print("scaffold")
+    else:
+        if args.dataset == 'imdb-b':
+            dataset = TUDataset(root='data/imdb/binary', name='IMDB-BINARY')
+        elif args.dataset == 'imdb-m':
+            dataset = TUDataset(root='data/imdb/multi', name='IMDB-MULTI')
+        
+        # random split # 
+        train_dataset, valid_dataset, test_dataset = random_split(dataset, null_value=0, frac_train=0.8,frac_valid=0.1, frac_test=0.1, seed = 0)
+
     print(train_dataset[0])
 
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers = args.num_workers)
