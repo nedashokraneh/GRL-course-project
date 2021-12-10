@@ -16,27 +16,33 @@ from tqdm import tqdm
 import numpy as np
 
 from model import GNN, GNN_graphpred
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, f1_score
 
 from splitters import scaffold_split, random_split, random_scaffold_split
 import pandas as pd
 
 from tensorboardX import SummaryWriter
 
-criterion = nn.BCEWithLogitsLoss(reduction = "none")
+# criterion = nn.BCEWithLogitsLoss(reduction = "none")
 
-def train(args, model, device, loader, optimizer):
+def train(args, model, device, loader, optimizer, criterion):
     model.train()
 
     for step, batch in enumerate(tqdm(loader, desc="Iteration")):
         batch = batch.to(device)
         pred = model(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
-        y = batch.y.view(pred.shape).to(torch.float64)
+        if args.evaluation == 'auc':
+            y = batch.y.view(pred.shape).to(torch.float64)
+        elif args.evaluation == 'f1':
+            y = batch.y.to(torch.float64)
 
         #Whether y is non-null or not.
         is_valid = y**2 > 0
         #Loss matrix
-        loss_mat = criterion(pred.double(), (y+1)/2)
+        if args.evaluation == 'auc':
+            loss_mat = criterion(pred.double(), (y+1)/2)
+        elif args.evaluation == 'f1':
+            loss_mat = criterion(pred.double(), ((y+1)/2).long())
         #loss matrix after removing null target
         loss_mat = torch.where(is_valid, loss_mat, torch.zeros(loss_mat.shape).to(loss_mat.device).to(loss_mat.dtype))
             
@@ -58,30 +64,50 @@ def eval(args, model, device, loader, normalized_weight=None):
         with torch.no_grad():
             pred = model(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
 
-        y_true.append(batch.y.view(pred.shape).cpu())
-        y_scores.append(pred.cpu())
+        if args.evaluation == 'auc':
+            y_true.append(batch.y.view(pred.shape).cpu())
+            y_scores.append(pred.cpu())
+        else:
+            y_true.append(batch.y)
+            y_scores.append(pred)
 
-    y_true = torch.cat(y_true, dim = 0).numpy()
-    y_scores = torch.cat(y_scores, dim = 0).numpy()
+        
 
-    roc_list = []
-    weight = []
-    for i in range(y_true.shape[1]):
-        #AUC is only defined when there is at least one positive data.
-        if np.sum(y_true[:,i] == 1) > 0 and np.sum(y_true[:,i] == -1) > 0:
-            is_valid = y_true[:,i]**2 > 0
-            roc_list.append(roc_auc_score((y_true[is_valid,i] + 1)/2, y_scores[is_valid,i]))
-            # weight.append(normalized_weight[i])
+    if args.evaluation == 'auc':
+        y_true = torch.cat(y_true, dim = 0).numpy()
+        y_scores = torch.cat(y_scores, dim = 0).numpy()
 
-    if len(roc_list) < y_true.shape[1]:
-        print("Some target is missing!")
-        print("Missing ratio: %f" %(1 - float(len(roc_list))/y_true.shape[1]))
+        roc_list = []
+        weight = []
+        for i in range(y_true.shape[1]):
+            #AUC is only defined when there is at least one positive data.
+            if np.sum(y_true[:,i] == 1) > 0 and np.sum(y_true[:,i] == -1) > 0:
+                is_valid = y_true[:,i]**2 > 0
+                roc_list.append(roc_auc_score((y_true[is_valid,i] + 1)/2, y_scores[is_valid,i]))
+                # weight.append(normalized_weight[i])
 
-    # weight = np.array(weight)
-    roc_list = np.array(roc_list)
+        if len(roc_list) < y_true.shape[1]:
+            print("Some target is missing!")
+            print("Missing ratio: %f" %(1 - float(len(roc_list))/y_true.shape[1]))
 
-    # return weight.dot(roc_list)
-    return sum(roc_list)/len(roc_list) 
+        # weight = np.array(weight)
+        roc_list = np.array(roc_list)
+
+        # return weight.dot(roc_list)
+        return sum(roc_list)/len(roc_list) 
+    elif args.evaluation == 'f1':
+        y_true.append(batch.y)
+        y_scores.append(pred)
+
+        y_true = torch.cat(y_true, dim=0)
+        y_scores = torch.cat(y_scores, dim=0)
+        preds = y_scores.argmax(dim=1)
+        # print("TEST y_true (-1, 1 ==> 0, 1): {}".format((y_true.cpu().numpy()+1)/2))
+        # print("TEST preds: {}".format(preds))
+        f1 = f1_score((y_true.cpu().numpy()+1)/2, preds.cpu().numpy(), average='micro')
+        return f1
+    else:
+        raise ValueError("Evaluation metric not defined.")
 
 
 def main():
@@ -112,6 +138,7 @@ def main():
     parser.add_argument('--input_model_file', type=str, default = '', help='filename to read the model (if there is any)')
     parser.add_argument('--output_model_file', type = str, default = '', help='filename to output the pre-trained model')
     parser.add_argument('--num_workers', type=int, default = 8, help='number of workers for dataset loading')
+    parser.add_argument('--evaluation', type=str, default='auc', help='evaluation metric: auc, f1')
     args = parser.parse_args()
 
 
@@ -121,11 +148,22 @@ def main():
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(0)
 
+    if args.evaluation == 'auc':
+        criterion = nn.BCEWithLogitsLoss(reduction = "none")
+    elif args.evaluation == 'f1':
+        criterion = nn.CrossEntropyLoss() 
+
     #Bunch of classification tasks
     if args.dataset == "bbbp":
-        num_tasks = 1
+        if args.evaluation == 'auc':
+            num_tasks = 1
+        elif args.evaluation == 'f1':
+            num_tasks = 2
     elif args.dataset == 'bace':
-        num_tasks = 1
+        if args.evaluation == 'auc':
+            num_tasks = 1
+        elif args.evaluation == 'f1':
+            num_tasks = 2
     else:
         raise ValueError("Invalid dataset name.")
 
@@ -161,7 +199,7 @@ def main():
     for epoch in range(1, args.epochs+1):
         print("====epoch " + str(epoch))
     
-        train(args, model, device, train_loader, optimizer)
+        train(args, model, device, train_loader, optimizer, criterion)
 
         print("====Evaluation")
         train_acc = eval(args, model, device, train_loader)
