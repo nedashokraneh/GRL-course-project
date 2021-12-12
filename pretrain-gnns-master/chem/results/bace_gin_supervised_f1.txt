@@ -1,0 +1,310 @@
+scaffold
+Data(edge_attr=[66, 2], edge_index=[2, 66], fold=[1], id=[1], x=[31, 2], y=[1])
+Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.001
+    weight_decay: 0
+)
+====epoch 1
+====Evaluation
+train: 0.519417 val: 0.649425 test: 0.573864
+====epoch 2
+====Evaluation
+train: 0.637540 val: 0.137931 test: 0.403409
+====epoch 3
+====Evaluation
+train: 0.642395 val: 0.591954 test: 0.562500
+====epoch 4
+====Evaluation
+train: 0.639968 val: 0.132184 test: 0.414773
+====epoch 5
+====Evaluation
+train: 0.664239 val: 0.206897 test: 0.437500
+====epoch 6
+====Evaluation
+train: 0.653722 val: 0.120690 test: 0.431818
+====epoch 7
+====Evaluation
+train: 0.611650 val: 0.137931 test: 0.386364
+====epoch 8
+====Evaluation
+train: 0.625405 val: 0.120690 test: 0.409091
+====epoch 9
+====Evaluation
+train: 0.787217 val: 0.362069 test: 0.539773
+====epoch 10
+====Evaluation
+train: 0.502427 val: 0.885057 test: 0.659091
+====epoch 11
+====Evaluation
+train: 0.594660 val: 0.827586 test: 0.738636
+====epoch 12
+====Evaluation
+train: 0.678803 val: 0.212644 test: 0.414773
+====epoch 13
+====Evaluation
+train: 0.796926 val: 0.448276 test: 0.545455
+====epoch 14
+====Evaluation
+train: 0.720065 val: 0.218391 test: 0.448864
+====epoch 15
+====Evaluation
+train: 0.648867 val: 0.166667 test: 0.443182
+====epoch 16
+====Evaluation
+train: 0.774272 val: 0.465517 test: 0.636364
+====epoch 17
+====Evaluation
+train: 0.675566 val: 0.126437 test: 0.426136
+====epoch 18
+====Evaluation
+train: 0.765372 val: 0.620690 test: 0.539773
+====epoch 19
+====Evaluation
+train: 0.631877 val: 0.120690 test: 0.420455
+====epoch 20
+====Evaluation
+train: 0.552589 val: 0.787356 test: 0.596591
+====epoch 21
+====Evaluation
+train: 0.822816 val: 0.436782 test: 0.551136
+====epoch 22
+====Evaluation
+train: 0.760518 val: 0.195402 test: 0.477273
+====epoch 23
+====Evaluation
+train: 0.760518 val: 0.770115 test: 0.551136
+====epoch 24
+====Evaluation
+train: 0.642395 val: 0.793103 test: 0.659091
+====epoch 25
+====Evaluation
+train: 0.795307 val: 0.310345 test: 0.551136
+====epoch 26
+====Evaluation
+train: 0.776699 val: 0.281609 test: 0.494318
+====epoch 27
+====Evaluation
+train: 0.676375 val: 0.850575 test: 0.568182
+====epoch 28
+====Evaluation
+train: 0.659385 val: 0.804598 test: 0.613636
+====epoch 29
+====Evaluation
+train: 0.793689 val: 0.505747 test: 0.528409
+====epoch 30
+====Evaluation
+train: 0.792071 val: 0.735632 test: 0.619318
+====epoch 31
+====Evaluation
+train: 0.791262 val: 0.580460 test: 0.585227
+====epoch 32
+====Evaluation
+train: 0.682848 val: 0.781609 test: 0.505682
+====epoch 33
+====Evaluation
+train: 0.766181 val: 0.735632 test: 0.710227
+====epoch 34
+====Evaluation
+train: 0.830906 val: 0.425287 test: 0.579545
+====epoch 35
+====Evaluation
+train: 0.793689 val: 0.419540 test: 0.534091
+====epoch 36
+====Evaluation
+train: 0.800971 val: 0.385057 test: 0.477273
+====epoch 37
+====Evaluation
+train: 0.854369 val: 0.436782 test: 0.505682
+====epoch 38
+====Evaluation
+train: 0.733010 val: 0.252874 test: 0.494318
+====epoch 39
+====Evaluation
+train: 0.725728 val: 0.787356 test: 0.681818
+====epoch 40
+====Evaluation
+train: 0.762136 val: 0.287356 test: 0.528409
+====epoch 41
+====Evaluation
+train: 0.748382 val: 0.281609 test: 0.653409
+====epoch 42
+====Evaluation
+train: 0.804207 val: 0.540230 test: 0.647727
+====epoch 43
+====Evaluation
+train: 0.835761 val: 0.517241 test: 0.505682
+====epoch 44
+====Evaluation
+train: 0.853560 val: 0.678161 test: 0.659091
+====epoch 45
+====Evaluation
+train: 0.832524 val: 0.465517 test: 0.551136
+====epoch 46
+====Evaluation
+train: 0.861650 val: 0.620690 test: 0.647727
+====epoch 47
+====Evaluation
+train: 0.838188 val: 0.672414 test: 0.607955
+====epoch 48
+====Evaluation
+train: 0.746764 val: 0.252874 test: 0.545455
+====epoch 49
+====Evaluation
+train: 0.834951 val: 0.408046 test: 0.551136
+====epoch 50
+====Evaluation
+train: 0.833333 val: 0.298851 test: 0.659091
+====epoch 51
+====Evaluation
+train: 0.855178 val: 0.718391 test: 0.687500
+====epoch 52
+====Evaluation
+train: 0.771845 val: 0.362069 test: 0.568182
+====epoch 53
+====Evaluation
+train: 0.833333 val: 0.752874 test: 0.670455
+====epoch 54
+====Evaluation
+train: 0.813107 val: 0.729885 test: 0.715909
+====epoch 55
+====Evaluation
+train: 0.851133 val: 0.494253 test: 0.585227
+====epoch 56
+====Evaluation
+train: 0.786408 val: 0.787356 test: 0.653409
+====epoch 57
+====Evaluation
+train: 0.847896 val: 0.563218 test: 0.630682
+====epoch 58
+====Evaluation
+train: 0.860841 val: 0.494253 test: 0.607955
+====epoch 59
+====Evaluation
+train: 0.833333 val: 0.517241 test: 0.522727
+====epoch 60
+====Evaluation
+train: 0.859223 val: 0.551724 test: 0.676136
+====epoch 61
+====Evaluation
+train: 0.845469 val: 0.396552 test: 0.607955
+====epoch 62
+====Evaluation
+train: 0.879450 val: 0.563218 test: 0.613636
+====epoch 63
+====Evaluation
+train: 0.857605 val: 0.689655 test: 0.607955
+====epoch 64
+====Evaluation
+train: 0.785599 val: 0.655172 test: 0.551136
+====epoch 65
+====Evaluation
+train: 0.750809 val: 0.816092 test: 0.698864
+====epoch 66
+====Evaluation
+train: 0.737055 val: 0.178161 test: 0.517045
+====epoch 67
+====Evaluation
+train: 0.778317 val: 0.356322 test: 0.551136
+====epoch 68
+====Evaluation
+train: 0.850324 val: 0.689655 test: 0.607955
+====epoch 69
+====Evaluation
+train: 0.792071 val: 0.350575 test: 0.517045
+====epoch 70
+====Evaluation
+train: 0.804207 val: 0.275862 test: 0.539773
+====epoch 71
+====Evaluation
+train: 0.866505 val: 0.678161 test: 0.613636
+====epoch 72
+====Evaluation
+train: 0.739482 val: 0.793103 test: 0.676136
+====epoch 73
+====Evaluation
+train: 0.842233 val: 0.425287 test: 0.681818
+====epoch 74
+====Evaluation
+train: 0.857605 val: 0.666667 test: 0.647727
+====epoch 75
+====Evaluation
+train: 0.860841 val: 0.534483 test: 0.642045
+====epoch 76
+====Evaluation
+train: 0.755663 val: 0.505747 test: 0.625000
+====epoch 77
+====Evaluation
+train: 0.860032 val: 0.649425 test: 0.670455
+====epoch 78
+====Evaluation
+train: 0.819579 val: 0.350575 test: 0.659091
+====epoch 79
+====Evaluation
+train: 0.821197 val: 0.362069 test: 0.613636
+====epoch 80
+====Evaluation
+train: 0.837379 val: 0.419540 test: 0.471591
+====epoch 81
+====Evaluation
+train: 0.822816 val: 0.614943 test: 0.732955
+====epoch 82
+====Evaluation
+train: 0.881068 val: 0.591954 test: 0.647727
+====epoch 83
+====Evaluation
+train: 0.885922 val: 0.545977 test: 0.607955
+====epoch 84
+====Evaluation
+train: 0.796117 val: 0.603448 test: 0.568182
+====epoch 85
+====Evaluation
+train: 0.829288 val: 0.528736 test: 0.687500
+====epoch 86
+====Evaluation
+train: 0.868932 val: 0.545977 test: 0.602273
+====epoch 87
+====Evaluation
+train: 0.850324 val: 0.436782 test: 0.670455
+====epoch 88
+====Evaluation
+train: 0.862460 val: 0.689655 test: 0.613636
+====epoch 89
+====Evaluation
+train: 0.885113 val: 0.597701 test: 0.625000
+====epoch 90
+====Evaluation
+train: 0.872168 val: 0.408046 test: 0.556818
+====epoch 91
+====Evaluation
+train: 0.693366 val: 0.126437 test: 0.448864
+====epoch 92
+====Evaluation
+train: 0.867314 val: 0.591954 test: 0.653409
+====epoch 93
+====Evaluation
+train: 0.829288 val: 0.316092 test: 0.528409
+====epoch 94
+====Evaluation
+train: 0.895631 val: 0.643678 test: 0.676136
+====epoch 95
+====Evaluation
+train: 0.848706 val: 0.758621 test: 0.744318
+====epoch 96
+====Evaluation
+train: 0.868932 val: 0.442529 test: 0.585227
+====epoch 97
+====Evaluation
+train: 0.889968 val: 0.649425 test: 0.642045
+====epoch 98
+====Evaluation
+train: 0.872977 val: 0.505747 test: 0.579545
+====epoch 99
+====Evaluation
+train: 0.845469 val: 0.459770 test: 0.573864
+====epoch 100
+====Evaluation
+train: 0.890777 val: 0.477011 test: 0.568182

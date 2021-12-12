@@ -1,0 +1,155 @@
+scaffold
+Data(edge_attr=[46, 2], edge_index=[2, 46], id=[1], x=[23, 2], y=[1])
+Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.001
+    weight_decay: 0
+)
+====epoch 1
+====Evaluation
+train: 0.868792 val: 0.573529 test: 0.549020
+====epoch 2
+====Evaluation
+train: 0.868179 val: 0.656863 test: 0.563725
+====epoch 3
+====Evaluation
+train: 0.876763 val: 0.583333 test: 0.544118
+====epoch 4
+====Evaluation
+train: 0.900674 val: 0.833333 test: 0.549020
+====epoch 5
+====Evaluation
+train: 0.640711 val: 0.696078 test: 0.529412
+====epoch 6
+====Evaluation
+train: 0.882894 val: 0.627451 test: 0.534314
+====epoch 7
+====Evaluation
+train: 0.896383 val: 0.750000 test: 0.504902
+====epoch 8
+====Evaluation
+train: 0.886573 val: 0.661765 test: 0.539216
+====epoch 9
+====Evaluation
+train: 0.885960 val: 0.681373 test: 0.529412
+====epoch 10
+====Evaluation
+train: 0.896383 val: 0.784314 test: 0.553922
+====epoch 11
+====Evaluation
+train: 0.893317 val: 0.833333 test: 0.593137
+====epoch 12
+====Evaluation
+train: 0.861435 val: 0.504902 test: 0.495098
+====epoch 13
+====Evaluation
+train: 0.821582 val: 0.838235 test: 0.529412
+====epoch 14
+====Evaluation
+train: 0.906193 val: 0.843137 test: 0.539216
+====epoch 15
+====Evaluation
+train: 0.914163 val: 0.808824 test: 0.568627
+====epoch 16
+====Evaluation
+train: 0.879828 val: 0.676471 test: 0.529412
+====epoch 17
+====Evaluation
+train: 0.884120 val: 0.754902 test: 0.529412
+====epoch 18
+====Evaluation
+train: 0.890251 val: 0.700980 test: 0.544118
+====epoch 19
+====Evaluation
+train: 0.865113 val: 0.794118 test: 0.539216
+====epoch 20
+====Evaluation
+train: 0.894543 val: 0.740196 test: 0.578431
+====epoch 21
+====Evaluation
+train: 0.906193 val: 0.754902 test: 0.549020
+====epoch 22
+====Evaluation
+train: 0.865113 val: 0.828431 test: 0.553922
+====epoch 23
+====Evaluation
+train: 0.910484 val: 0.764706 test: 0.549020
+====epoch 24
+====Evaluation
+train: 0.873084 val: 0.715686 test: 0.553922
+====epoch 25
+====Evaluation
+train: 0.873084 val: 0.553922 test: 0.509804
+====epoch 26
+====Evaluation
+train: 0.893930 val: 0.656863 test: 0.524510
+====epoch 27
+====Evaluation
+train: 0.889638 val: 0.833333 test: 0.622549
+====epoch 28
+====Evaluation
+train: 0.896996 val: 0.735294 test: 0.544118
+====epoch 29
+====Evaluation
+train: 0.931330 val: 0.784314 test: 0.583333
+====epoch 30
+====Evaluation
+train: 0.900674 val: 0.725490 test: 0.578431
+====epoch 31
+====Evaluation
+train: 0.875536 val: 0.661765 test: 0.539216
+====epoch 32
+====Evaluation
+train: 0.913550 val: 0.784314 test: 0.568627
+====epoch 33
+====Evaluation
+train: 0.877989 val: 0.602941 test: 0.519608
+====epoch 34
+====Evaluation
+train: 0.902514 val: 0.740196 test: 0.563725
+====epoch 35
+====Evaluation
+train: 0.920907 val: 0.794118 test: 0.588235
+====epoch 36
+====Evaluation
+train: 0.865727 val: 0.750000 test: 0.573529
+====epoch 37
+====Evaluation
+train: 0.891478 val: 0.666667 test: 0.519608
+====epoch 38
+====Evaluation
+train: 0.909258 val: 0.789216 test: 0.553922
+====epoch 39
+====Evaluation
+train: 0.904966 val: 0.779412 test: 0.573529
+====epoch 40
+====Evaluation
+train: 0.781729 val: 0.784314 test: 0.539216
+====epoch 41
+====Evaluation
+train: 0.914776 val: 0.803922 test: 0.622549
+====epoch 42
+====Evaluation
+train: 0.911097 val: 0.813725 test: 0.607843
+====epoch 43
+====Evaluation
+train: 0.918455 val: 0.769608 test: 0.539216
+====epoch 44
+====Evaluation
+train: 0.914776 val: 0.759804 test: 0.539216
+====epoch 45
+====Evaluation
+train: 0.879828 val: 0.598039 test: 0.563725
+====epoch 46
+====Evaluation
+train: 0.929491 val: 0.828431 test: 0.593137
+====epoch 47
+====Evaluation
+train: 0.927652 val: 0.784314 test: 0.573529
+====epoch 48
+====Evaluation
+train: 0.926426 val: 0.769608 test: 0.549020
+====epoch 49

@@ -1,0 +1,518 @@
+MoleculeDataset(1513)
+scaffold
+Data(edge_attr=[66, 2], edge_index=[2, 66], fold=[1], id=[1], x=[31, 2], y=[1])
+Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.001
+    weight_decay: 0
+
+Parameter Group 1
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.001
+    weight_decay: 0
+)
+====epoch 1
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.293103 test: 0.471591
+
+====epoch 2
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.614943 test: 0.630682
+
+====epoch 3
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.712644 test: 0.653409
+
+====epoch 4
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.706897 test: 0.653409
+
+====epoch 5
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.752874 test: 0.693182
+
+====epoch 6
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.741379 test: 0.681818
+
+====epoch 7
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.724138 test: 0.664773
+
+====epoch 8
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.752874 test: 0.704545
+
+====epoch 9
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.764368 test: 0.698864
+
+====epoch 10
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.712644 test: 0.704545
+
+====epoch 11
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.764368 test: 0.698864
+
+====epoch 12
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.693182
+
+====epoch 13
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.758621 test: 0.693182
+
+====epoch 14
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.741379 test: 0.687500
+
+====epoch 15
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.721591
+
+====epoch 16
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.747126 test: 0.710227
+
+====epoch 17
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.787356 test: 0.721591
+
+====epoch 18
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.758621 test: 0.715909
+
+====epoch 19
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.693182
+
+====epoch 20
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.704545
+
+====epoch 21
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.787356 test: 0.715909
+
+====epoch 22
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.821839 test: 0.727273
+
+====epoch 23
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.810345 test: 0.715909
+
+====epoch 24
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.793103 test: 0.698864
+
+====epoch 25
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.798851 test: 0.693182
+
+====epoch 26
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.810345 test: 0.704545
+
+====epoch 27
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.781609 test: 0.704545
+
+====epoch 28
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.798851 test: 0.704545
+
+====epoch 29
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.798851 test: 0.704545
+
+====epoch 30
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.787356 test: 0.698864
+
+====epoch 31
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.787356 test: 0.687500
+
+====epoch 32
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.764368 test: 0.687500
+
+====epoch 33
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.793103 test: 0.698864
+
+====epoch 34
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.781609 test: 0.704545
+
+====epoch 35
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.781609 test: 0.721591
+
+====epoch 36
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.787356 test: 0.738636
+
+====epoch 37
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.758621 test: 0.687500
+
+====epoch 38
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.787356 test: 0.744318
+
+====epoch 39
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.793103 test: 0.715909
+
+====epoch 40
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.764368 test: 0.698864
+
+====epoch 41
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.775862 test: 0.698864
+
+====epoch 42
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.793103 test: 0.715909
+
+====epoch 43
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.793103 test: 0.715909
+
+====epoch 44
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.764368 test: 0.687500
+
+====epoch 45
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.798851 test: 0.738636
+
+====epoch 46
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.793103 test: 0.715909
+
+====epoch 47
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.732955
+
+====epoch 48
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.752874 test: 0.721591
+
+====epoch 49
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.747126 test: 0.715909
+
+====epoch 50
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.752874 test: 0.710227
+
+====epoch 51
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.710227
+
+====epoch 52
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.781609 test: 0.704545
+
+====epoch 53
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.781609 test: 0.744318
+
+====epoch 54
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.758621 test: 0.693182
+
+====epoch 55
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.775862 test: 0.710227
+
+====epoch 56
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.775862 test: 0.704545
+
+====epoch 57
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.775862 test: 0.687500
+
+====epoch 58
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.775862 test: 0.715909
+
+====epoch 59
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.764368 test: 0.732955
+
+====epoch 60
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.729885 test: 0.704545
+
+====epoch 61
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.758621 test: 0.755682
+
+====epoch 62
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.752874 test: 0.715909
+
+====epoch 63
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.729885 test: 0.704545
+
+====epoch 64
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.735632 test: 0.732955
+
+====epoch 65
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.758621 test: 0.744318
+
+====epoch 66
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.750000
+
+====epoch 67
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.752874 test: 0.732955
+
+====epoch 68
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.781609 test: 0.738636
+
+====epoch 69
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.787356 test: 0.727273
+
+====epoch 70
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.758621 test: 0.744318
+
+====epoch 71
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.735632 test: 0.715909
+
+====epoch 72
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.764368 test: 0.727273
+
+====epoch 73
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.775862 test: 0.738636
+
+====epoch 74
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.758621 test: 0.721591
+
+====epoch 75
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.781609 test: 0.738636
+
+====epoch 76
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.747126 test: 0.738636
+
+====epoch 77
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.781609 test: 0.744318
+
+====epoch 78
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.758621 test: 0.744318
+
+====epoch 79
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.750000
+
+====epoch 80
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.758621 test: 0.715909
+
+====epoch 81
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.738636
+
+====epoch 82
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.738636
+
+====epoch 83
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.741379 test: 0.732955
+
+====epoch 84
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.758621 test: 0.727273
+
+====epoch 85
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.781609 test: 0.744318
+
+====epoch 86
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.738636
+
+====epoch 87
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.758621 test: 0.744318
+
+====epoch 88
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.775862 test: 0.750000
+
+====epoch 89
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.767045
+
+====epoch 90
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.758621 test: 0.750000
+
+====epoch 91
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.744318
+
+====epoch 92
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.738636
+
+====epoch 93
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.732955
+
+====epoch 94
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.752874 test: 0.732955
+
+====epoch 95
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.752874 test: 0.732955
+
+====epoch 96
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.744318
+
+====epoch 97
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.770115 test: 0.732955
+
+====epoch 98
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.764368 test: 0.744318
+
+====epoch 99
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.764368 test: 0.750000
+
+====epoch 100
+====Evaluation
+omit the training accuracy computation
+train: 0.000000 val: 0.752874 test: 0.744318
+

@@ -12,10 +12,11 @@ from tqdm import tqdm
 import numpy as np
 
 from model import GNN, GNN_graphpred
-from sklearn.metrics import roc_auc_score, f1_score, accuracy_score
+from sklearn.metrics import roc_auc_score, f1_score
 
-from splitters import scaffold_split
+from splitters import scaffold_split, random_split
 import pandas as pd
+from TUDataset import TUDataset
 
 import os
 import shutil
@@ -29,8 +30,14 @@ def train(args, model, device, loader, optimizer, criterion):
 
     for step, batch in enumerate(tqdm(loader, desc="Iteration")):
         batch = batch.to(device)
-        pred = model(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
-        # print("TEST pred: {}".format(pred))
+        
+        ## manually add create node feature and edge attribute ([0, 0]) to IMDB data ## 
+        num_nodes = batch.batch.shape[0]
+        num_edges = batch.edge_index.shape[1]
+        x = torch.zeros(size=[num_nodes, 2], dtype=torch.long).to(device)
+        edge_attr = torch.zeros(size=[num_edges, 2], dtype=torch.long).to(device)
+
+        pred = model(x, batch.edge_index, edge_attr, batch.batch)
         if args.evaluation == 'auc':
             y = batch.y.view(pred.shape).to(torch.float64)
         elif args.evaluation == 'f1':
@@ -46,18 +53,19 @@ def train(args, model, device, loader, optimizer, criterion):
         # print("TEST y: \n{}\n".format(y))
 
         #Whether y is non-null or not.
-        is_valid = y**2 > 0
+        is_valid = y**2 >= 0 # y is [0, 1] for IMDB data 
+        # print("TEST is_valid: {}".format(is_valid))
         #Loss matrix
-        # print("TEST (y+1)/2: {}".format((y+1)/2))
         if args.evaluation == 'auc':
-            loss_mat = criterion(pred.double(), (y+1)/2) # original
+            loss_mat = criterion(pred.double(), y)
         elif args.evaluation == 'f1':
-            loss_mat = criterion(pred.double(), ((y+1)/2).long())
+            loss_mat = criterion(pred.double(), y.long())
         #loss matrix after removing null target
         loss_mat = torch.where(is_valid, loss_mat, torch.zeros(loss_mat.shape).to(loss_mat.device).to(loss_mat.dtype))
             
         optimizer.zero_grad()
         loss = torch.sum(loss_mat)/torch.sum(is_valid)
+        # print("TEST loss: {}".format(loss))
         loss.backward()
 
         optimizer.step()
@@ -71,34 +79,36 @@ def eval(args, model, device, loader):
     for step, batch in enumerate(tqdm(loader, desc="Iteration")):
         batch = batch.to(device)
 
+        ## manually add create node feature and edge attribute ([0, 0]) to IMDB data ## 
+        num_nodes = batch.batch.shape[0]
+        num_edges = batch.edge_index.shape[1]
+        x = torch.zeros(size=[num_nodes, 2], dtype=torch.long).to(device)
+        edge_attr = torch.zeros(size=[num_edges, 2], dtype=torch.long).to(device)
+
         with torch.no_grad():
-            pred = model(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
+            pred = model(x, batch.edge_index, edge_attr, batch.batch)
+            # print("TEST pred: {}".format(pred))
 
         if args.evaluation == 'auc':
             y_true.append(batch.y.view(pred.shape))
-        else:
+        elif args.evaluation == 'f1':
             y_true.append(batch.y)
 
         y_scores.append(pred)
-
-
+    
     if args.evaluation == 'auc':
-
-
         y_true = torch.cat(y_true, dim = 0).cpu().numpy()
         y_scores = torch.cat(y_scores, dim = 0).cpu().numpy()
 
         roc_list = []
         for i in range(y_true.shape[1]):
-            print("TEST y_true[:, i]: {}".format(y_true[:, i]))
+            # print("TEST y_true[:,i]: {}".format(y_true[:, i]))
             #AUC is only defined when there is at least one positive data.
-            if np.sum(y_true[:,i] == 1) > 0 and np.sum(y_true[:,i] == -1) > 0:
-                is_valid = y_true[:,i]**2 > 0
-                print("TEST is_valid: {}".format(is_valid))
-                print("TEST is_valid: {}".format(is_valid))
-                print("TEST (y_true[is_valid,i] + 1)/2: {}".format((y_true[is_valid,i] + 1)/2))
-                print("TEST y_scores[is_valid,i]: {}".format(y_scores[is_valid,i]))
-                roc_list.append(roc_auc_score((y_true[is_valid,i] + 1)/2, y_scores[is_valid,i]))
+            if np.sum(y_true[:,i] == 1) > 0 and np.sum(y_true[:,i] == 0) > 0: # change '-1' to '0' because labels in IMDB-B are 0,1 instead of -1,1
+                is_valid = y_true[:,i]**2 >= 0
+                # print("TEST is_valid: {}".format(is_valid))
+                # print("TEST y_scores[is_valid,i]: {}".format(y_scores[is_valid,i]))
+                roc_list.append(roc_auc_score(y_true[is_valid,i], y_scores[is_valid,i]))
 
         if len(roc_list) < y_true.shape[1]:
             print("Some target is missing!")
@@ -106,25 +116,20 @@ def eval(args, model, device, loader):
 
         return sum(roc_list)/len(roc_list) #y_true.shape[1]
     elif args.evaluation == 'f1':
-        # y_true.append(batch.y)##
-        # y_scores.append(pred)
 
-        # y_true = torch.cat(y_true, dim = 0).cpu().numpy()
-        # y_scores = torch.cat(y_scores, dim = 0).cpu().numpy()
-        y_true = torch.cat(y_true, dim = 0)
-        y_scores = torch.cat(y_scores, dim = 0)
+        y_true = torch.cat(y_true, dim=0)
+        y_scores = torch.cat(y_scores, dim=0)
         preds = y_scores.argmax(dim=1)
-        # print("TEST y_scores: {}".format(y_scores))
+        f1 = f1_score(y_true.cpu().numpy(), preds.cpu().numpy(), average='micro')
         # print("TEST preds: {}".format(preds))
         # print("TEST y_true: {}".format(y_true))
-        f1 = f1_score((y_true.cpu().numpy()+1)/2, preds.cpu().numpy(), average='micro')
-        # f1 = f1_score(y_true.cpu().numpy(), preds.cpu().numpy(), average=None)
-        # print("f1 score: {}".format(f1))
-
+        # print("TEST len(y_true): {}".format(len(y_true.cpu().numpy())))
+        # print("TEST len(preds): {}".format(len(preds.cpu().numpy())))
+        
         return f1
     else:
         raise ValueError("Evaluation metric not defined.")
-    
+
 
 
 def main():
@@ -161,7 +166,7 @@ def main():
     parser.add_argument('--split', type = str, default="scaffold", help = "random or scaffold or random_scaffold")
     parser.add_argument('--eval_train', type=int, default = 0, help='evaluating training or not')
     parser.add_argument('--num_workers', type=int, default = 4, help='number of workers for dataset loading')
-    parser.add_argument('--evaluation', type=str, default='auc', help='evaluation metric used. auc, f1.')
+    parser.add_argument('--evaluation', type=str, default='auc', help='evaluation metric used. auc, f1.')    
     args = parser.parse_args()
 
 
@@ -171,58 +176,28 @@ def main():
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(args.runseed)
 
-
-    if args.evaluation == 'f1':
-        criterion = nn.CrossEntropyLoss()
-    else:
+    if args.evaluation == 'auc':
         criterion = nn.BCEWithLogitsLoss(reduction = "none")
+    elif args.evaluation == 'f1':
+        criterion = nn.CrossEntropyLoss()
 
     #Bunch of classification tasks
-    if args.dataset == "tox21":
-        num_tasks = 12
-    elif args.dataset == "hiv":
-        num_tasks = 1
-    elif args.dataset == "pcba":
-        num_tasks = 128
-    elif args.dataset == "muv":
-        num_tasks = 17
-    elif args.dataset == "bace":
-        if args.evaluation == 'f1':
-            num_tasks = 2
-        else:
+    if args.dataset == "imdb-b":
+        if args.evaluation == 'auc':
             num_tasks = 1
-    elif args.dataset == "bbbp":
-        if args.evaluation == 'f1':
+        elif args.evaluation == 'f1':
             num_tasks = 2
-        else:
-            num_tasks = 1
-    elif args.dataset == "toxcast":
-        num_tasks = 617
-    elif args.dataset == "sider":
-        num_tasks = 27
-    elif args.dataset == "clintox":
-        num_tasks = 2
+        dataset = TUDataset(root='data/imdb/binary', name='IMDB-BINARY')
+    elif args.dataset == "imdb-m":
+        num_tasks = 3 # 3 classes (??)
+        dataset = TUDataset(root='data/imdb/multi', name='IMDB-MULTI')
     else:
-        raise ValueError("Invalid dataset name.")
-
-
-
-    #set up dataset
-    dataset = MoleculeDataset("dataset/" + args.dataset, dataset=args.dataset)
+        raise ValueError("Invalid dataset name.")    
 
     print(dataset)
     
-    if args.split == "scaffold":
-        smiles_list = pd.read_csv('dataset/' + args.dataset + '/processed/smiles.csv', header=None)[0].tolist()
-        train_dataset, valid_dataset, test_dataset = scaffold_split(dataset, smiles_list, null_value=0, frac_train=0.8,frac_valid=0.1, frac_test=0.1)
-        print("scaffold")
-    elif args.split == "random":
+    if args.split == "random":
         train_dataset, valid_dataset, test_dataset = random_split(dataset, null_value=0, frac_train=0.8,frac_valid=0.1, frac_test=0.1, seed = args.seed)
-        print("random")
-    elif args.split == "random_scaffold":
-        smiles_list = pd.read_csv('dataset/' + args.dataset + '/processed/smiles.csv', header=None)[0].tolist()
-        train_dataset, valid_dataset, test_dataset = random_scaffold_split(dataset, smiles_list, null_value=0, frac_train=0.8,frac_valid=0.1, frac_test=0.1, seed = args.seed)
-        print("random scaffold")
     else:
         raise ValueError("Invalid split option.")
 
