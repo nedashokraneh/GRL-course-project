@@ -16,10 +16,10 @@ import numpy as np
 import psutil
 import torch
 import torch.nn as nn
-from joblib import Parallel, delayed
+#from joblib import Parallel, delayed
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.model_selection import StratifiedKFold
-from torch.utils.tensorboard import SummaryWriter
+#from torch.utils.tensorboard import SummaryWriter
 
 from gcc.contrastive.criterions import NCESoftmaxLoss, NCESoftmaxLossNS
 from gcc.contrastive.memory_moco import MemoryMoCo
@@ -180,7 +180,6 @@ def train_finetune(
     criterion,
     optimizer,
     output_layer_optimizer,
-    sw,
     opt,
 ):
     """
@@ -280,6 +279,7 @@ def train_finetune(
             #  print(out[0].abs().max())
 
         # tensorboard logger
+        '''
         if (idx + 1) % opt.tb_freq == 0:
             sw.add_scalar("ft_loss", loss_meter.avg, global_step)
             sw.add_scalar("ft_f1", f1_meter.avg, global_step)
@@ -294,10 +294,11 @@ def train_finetune(
             f1_meter.reset()
             graph_size.reset()
             max_num_nodes, max_num_edges = 0, 0
+        '''
     return epoch_loss_meter.avg, epoch_f1_meter.avg
 
 
-def test_finetune(epoch, valid_loader, model, output_layer, criterion, sw, opt):
+def test_finetune(epoch, valid_loader, model, output_layer, criterion, opt):
     n_batch = len(valid_loader)
     model.eval()
     output_layer.eval()
@@ -329,8 +330,8 @@ def test_finetune(epoch, valid_loader, model, output_layer, criterion, sw, opt):
         epoch_f1_meter.update(f1, bsz)
 
     global_step = (epoch + 1) * n_batch
-    sw.add_scalar("ft_loss/valid", epoch_loss_meter.avg, global_step)
-    sw.add_scalar("ft_f1/valid", epoch_f1_meter.avg, global_step)
+    #sw.add_scalar("ft_loss/valid", epoch_loss_meter.avg, global_step)
+    #sw.add_scalar("ft_f1/valid", epoch_f1_meter.avg, global_step)
     print(
         f"Epoch {epoch}, loss {epoch_loss_meter.avg:.3f}, f1 {epoch_f1_meter.avg:.3f}"
     )
@@ -461,6 +462,7 @@ def train_moco(
             #  print(out[0].abs().max())
 
         # tensorboard logger
+        '''
         if (idx + 1) % opt.tb_freq == 0:
             global_step = epoch * n_batch + idx
             sw.add_scalar("moco_loss", loss_meter.avg, global_step)
@@ -475,6 +477,7 @@ def train_moco(
             graph_size.reset()
             gnorm_meter.reset()
             max_num_nodes, max_num_edges = 0, 0
+        '''
     return epoch_loss_meter.avg
 
 
@@ -703,7 +706,7 @@ def main(args):
 
     # tensorboard
     #  logger = tb_logger.Logger(logdir=args.tb_folder, flush_secs=2)
-    sw = SummaryWriter(args.tb_folder)
+    # sw = SummaryWriter(args.tb_folder)
     #  plots_q, plots_k = zip(*[train_dataset.getplot(i) for i in range(5)])
     #  plots_q = torch.cat(plots_q)
     #  plots_k = torch.cat(plots_k)

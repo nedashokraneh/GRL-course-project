@@ -1,0 +1,15 @@
+model	scheme	imdb-b	imdb-m	bbbp	bace
+GCC	ft	0.64	0.47	0.57	0.64
+GCC	sw	0.7	0.48	0.55	0.63
+Graph Infomax (GIN)	ft	0.73	0.43	0.6	0.66
+Graph Infomax (GIN)	sw	0.66	0.41	0.58	0.57
+Supervised (GIN)	ft	0.72	0.43	0.6	0.64
+Supervised (GIN)	sw	0.66	0.41	0.58	0.57
+Supervised Infomax (GIN)	ft	0.73	0.43	0.62	0.74
+Supervised Infomax (GIN)	sw	0.66	0.41	0.58	0.57
+Supervised EdgePred (GIN)	ft	0.72	0.43	0.61	0.66
+Supervised EdgePred (GIN)	sw	0.66	0.41	0.58	0.57
+Supervised AttrMasking (GIN)	ft	0.71	0.43	0.62	0.7
+Supervised AttrMasking (GIN)	sw	0.66	0.41	0.58	0.57
+Supervised ContextPred (GIN)	ft	0.73	0.39	0.61	0.72
+Supervised ContextPred (GIN)	sw	0.66	0.41	0.58	0.57

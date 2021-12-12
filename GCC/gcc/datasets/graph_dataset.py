@@ -29,7 +29,7 @@ def worker_init_fn(worker_id):
     dataset.length = sum([g.number_of_nodes() for g in dataset.graphs])
     np.random.seed(worker_info.seed % (2 ** 32))
 
-'''
+
 class LoadBalanceGraphDataset(torch.utils.data.IterableDataset):
     def __init__(
         self,
@@ -177,7 +177,7 @@ class LoadBalanceGraphDataset(torch.utils.data.IterableDataset):
             graph_q = self.graph_transform(graph_q)
             graph_k = self.graph_transform(graph_k)
         return graph_q, graph_k
-'''
+
 
 class GraphDataset(torch.utils.data.Dataset):
     def __init__(
@@ -383,7 +383,7 @@ class GraphClassificationDatasetLabeled(GraphClassificationDataset):
             positional_embedding_size=self.positional_embedding_size,
             entire_graph=True,
         )
-        return graph_q, self.dataset.graph_labels[graph_idx].item()
+        return graph_q, self.dataset.graph_labels[graph_idx]
 
 
 class NodeClassificationDatasetLabeled(NodeClassificationDataset):

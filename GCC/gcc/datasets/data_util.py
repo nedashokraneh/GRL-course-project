@@ -20,9 +20,11 @@ import sklearn.preprocessing as preprocessing
 import torch
 import torch.nn.functional as F
 from dgl.data.tu import TUDataset
+from torch_geometric.datasets import MoleculeNet
 from scipy.sparse import linalg
 
 from dgl.data.utils import load_graphs
+from dgl import DGLGraph
 
 
 
@@ -58,12 +60,24 @@ def create_graph_classification_dataset(dataset_name):
         "bace": "bace",
     }[dataset_name]
     if name in ["bbbp", "bace"]:
-
+        '''
         mol_graph = load_graphs("/home/nshokran/projects/GRL-course-project/GCC/data/DGLgraphs/" + name + "_dglgraph.bin")
         dataset = namedtuple('dataset', 'graph_lists graph_labels num_labels')
         dataset.graph_lists = mol_graph[0]
         dataset.graph_labels = mol_graph[1]['labels'].squeeze()
         dataset.num_labels = len(np.unique(dataset.graph_labels))
+        '''
+        torch_dataset = MoleculeNet(root='data/'+name, name=name)
+        dataset = namedtuple('dataset', 'graph_lists graph_labels num_labels')
+        dataset.graph_lists = []
+        dataset.graph_labels = []
+        for d in torch_dataset:
+            g = DGLGraph()
+            g.add_nodes(d.x.shape[0])
+            g.add_edges(d.edge_index[0, :], d.edge_index[1, :])
+            dataset.graph_lists.append(g)
+            dataset.graph_labels.append(int(d.y.item()))
+            dataset.num_labels = len(np.unique(dataset.graph_labels))
     else:
         dataset = TUDataset(name)
         dataset.num_labels = dataset.num_labels[0]
